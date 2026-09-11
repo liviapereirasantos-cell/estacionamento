@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estacionamento Digital · Elisee</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0c1222;
+            --card: #151c2c;
+            --border: #243044;
+            --text: #eef2ff;
+            --muted: #94a3b8;
+            --primary: #22c55e;
+            --primary-dark: #16a34a;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --info: #3b82f6;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Outfit', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 30px 20px;
+            background-image:
+                radial-gradient(circle at 10% 20%, rgba(34, 197, 94, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(59, 130, 246, 0.06) 0%, transparent 40%);
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        header h1 {
+            font-size: 2.4rem;
+            font-weight: 700;
+            letter-spacing: -0.03em;
+        }
+
+        header h1 span {
+            color: var(--primary);
+        }
+
+        header p {
+            color: var(--muted);
+            margin-top: 8px;
+            font-size: 1.05rem;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1.4fr;
+            gap: 28px;
+        }
+
+        @media (max-width: 860px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 28px;
+            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.4);
+        }
+
+        .card h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 22px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card h2 .icon {
+            width: 32px;
+            height: 32px;
+            background: rgba(34, 197, 94, 0.15);
+            color: var(--primary);
+            border-radius: 10px;
+            display: grid;
+            place-items: center;
+            font-size: 1.1rem;
+        }
+
+        .field {
+            margin-bottom: 18px;
+        }
+
+        .field label {
+            display: block;
+            font-size: 0.82rem;
+            font-weight: 500;
+            color: var(--muted);
+            margin-bottom: 7px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .field input {
+            width: 100%;
+            background: #0f172a;
+            border: 1.5px solid var(--border);
+            border-radius: 12px;
+            padding: 13px 16px;
+            font-size: 1rem;
+            color: var(--text);
+            outline: none;
+            transition: 0.2s;
+            font-family: inherit;
+        }
+
+        .field input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.15);
+        }
+
+        .btn {
+            width: 100%;
+            background: var(--primary);
+            color: #052e16;
+            border: none;
+            border-radius: 12px;
+            padding: 15px;
+            font-size: 1.05rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            font-family: inherit;
+            margin-top: 8px;
+        }
+
+        .btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        /* Vagas */
+        .vagas-info {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .vaga-box {
+            flex: 1;
+            background: #0f172a;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .vaga-box .num {
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .vaga-box .label {
+            font-size: 0.8rem;
+            color: var(--muted);
+            margin-top: 4px;
+        }
+
+        .livre .num {
+            color: var(--primary);
+        }
+
+        .ocupada .num {
+            color: var(--danger);
+        }
+
+        /* Lista de veículos */
+        .lista {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            max-height: 480px;
+            overflow-y: auto;
+            padding-right: 6px;
+        }
+
+        .lista::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .lista::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 10px;
+        }
+
+        .veiculo {
+            background: #0f172a;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 16px 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            transition: 0.2s;
+        }
+
+        .veiculo:hover {
+            border-color: #334155;
+        }
+
+        .veiculo-info h3 {
+            font-size: 1.15rem;
+            font-weight: 600;
+            letter-spacing: 0.03em;
+        }
+
+        .veiculo-info p {
+            font-size: 0.85rem;
+            color: var(--muted);
+            margin-top: 3px;
+        }
+
+        .veiculo-actions {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 8px;
+        }
+
+        .tempo {
+            font-size: 0.85rem;
+            color: var(--warning);
+            font-weight: 500;
+        }
+
+        .btn-sair {
+            background: transparent;
+            border: 1.5px solid var(--danger);
+            color: var(--danger);
+            padding: 7px 14px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            font-family: inherit;
+        }
+
+        .btn-sair:hover {
+            background: var(--danger);
+            color: white;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 50px 20px;
+            color: var(--muted);
+        }
+
+        .empty span {
+            font-size: 2.5rem;
+            display: block;
+            margin-bottom: 12px;
+        }
+
+        /* Modal de saída */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            padding: 20px;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .modal {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 32px;
+            width: 100%;
+            max-width: 380px;
+            text-align: center;
+        }
+
+        .modal h3 {
+            font-size: 1.4rem;
+            margin-bottom: 8px;
+        }
+
+        .modal .placa {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--primary);
+            letter-spacing: 0.05em;
+            margin-bottom: 20px;
+        }
+
+        .modal-info {
+            background: #0f172a;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 24px;
+            text-align: left;
+        }
+
+        .modal-info p {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+
+        .modal-info p:last-child {
+            margin-bottom: 0;
+            font-weight: 600;
+            color: var(--primary);
+            font-size: 1.1rem;
+            border-top: 1px solid var(--border);
+            padding-top: 10px;
+            margin-top: 8px;
+        }
+
+        .modal-btns {
+            display: flex;
+            gap: 12px;
+        }
+
+        .modal-btns button {
+            flex: 1;
+            padding: 13px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.95rem;
+            border: none;
+        }
+
+        .btn-confirmar {
+            background: var(--primary);
+            color: #052e16;
+        }
+
+        .btn-cancelar {
+            background: transparent;
+            border: 1.5px solid var(--border) !important;
+            color: var(--muted);
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            color: var(--muted);
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>Estacionamento <span>Digital</span></h1>
+            <p>Sistema de controle de vagas · Elisee</p>
+        </header>
+
+        <div class="grid">
+            <!-- Formulário de entrada -->
+            <div class="card">
+                <h2><span class="icon">🚗</span> Nova Entrada</h2>
+
+                <div class="field">
+                    <label for="placa">Placa do veículo</label>
+                    <input type="text" id="placa" placeholder="ABC-1D23" maxlength="8">
+                </div>
+
+                <div class="field">
+                    <label for="modelo">Modelo</label>
+                    <input type="text" id="modelo" placeholder="Ex: Civic, Onix, Corolla...">
+                </div>
+
+                <div class="field">
+                    <label for="proprietario">Proprietário</label>
+                    <input type="text" id="proprietario" placeholder="Nome completo">
+                </div>
+
+                <button class="btn" onclick="entrar()">Registrar Entrada</button>
+            </div>
+
+            <!-- Lista de veículos -->
+            <div class="card">
+                <h2><span class="icon">🅿️</span> Veículos Estacionados</h2>
+
+                <div class="vagas-info">
+                    <div class="vaga-box livre">
+                        <div class="num" id="vagasLivres">10</div>
+                        <div class="label">Vagas livres</div>
+                    </div>
+                    <div class="vaga-box ocupada">
+                        <div class="num" id="vagasOcupadas">0</div>
+                        <div class="label">Ocupadas</div>
+                    </div>
+                </div>
+
+                <div class="lista" id="lista">
+                    <div class="empty">
+                        <span>🚙</span>
+                        Nenhum veículo estacionado no momento
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            Estacionamento Digital · Desenvolvido para Elisee · Valor: R$ 5,00 / hora
+        </footer>
+    </div>
+
+    <!-- Modal de saída -->
+    <div class="modal-overlay" id="modal">
+        <div class="modal">
+            <h3>Confirmar Saída</h3>
+            <div class="placa" id="modalPlaca">—</div>
+            <div class="modal-info">
+                <p><span>Tempo estacionado:</span> <span id="modalTempo">—</span></p>
+                <p><span>Valor a pagar:</span> <span id="modalValor">—</span></p>
+            </div>
+            <div class="modal-btns">
+                <button class="btn-cancelar" onclick="fecharModal()">Cancelar</button>
+                <button class="btn-confirmar" onclick="confirmarSaida()">Confirmar Saída</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const TOTAL_VAGAS = 10;
+        let veiculos = JSON.parse(localStorage.getItem('estacionamento')) || [];
+        let veiculoSaindo = null;
+
+        // Atualiza a tela
+        function atualizar() {
+            const lista = document.getElementById('lista');
+            const livres = TOTAL_VAGAS - veiculos.length;
+
+            document.getElementById('vagasLivres').textContent = livres;
+            document.getElementById('vagasOcupadas').textContent = veiculos.length;
+
+            if (veiculos.length === 0) {
+                lista.innerHTML = `
+          <div class="empty">
+            <span>🚙</span>
+            Nenhum veículo estacionado no momento
+          </div>`;
+                return;
+            }
+
+            lista.innerHTML = veiculos.map((v, i) => {
+                const tempo = calcularTempo(v.entrada);
+                return `
+          <div class="veiculo">
+            <div class="veiculo-info">
+              <h3>${v.placa}</h3>
+              <p>${v.modelo} · ${v.proprietario}</p>
+            </div>
+            <div class="veiculo-actions">
+              <div class="tempo">${tempo}</div>
+              <button class="btn-sair" onclick="abrirSaida(${i})">Sair</button>
+            </div>
+          </div>
+        `;
+            }).join('');
+        }
+
+        function calcularTempo(entrada) {
+            const diff = Date.now() - new Date(entrada).getTime();
+            const horas = Math.floor(diff / 3600000);
+            const minutos = Math.floor((diff % 3600000) / 60000);
+            return `${horas}h ${minutos}min`;
+        }
+
+        function calcularValor(entrada) {
+            const diff = Date.now() - new Date(entrada).getTime();
+            const horas = Math.ceil(diff / 3600000); // arredonda para cima
+            return (horas * 5).toFixed(2); // R$ 5,00 por hora
+        }
+
+        function entrar() {
+            const placa = document.getElementById('placa').value.trim().toUpperCase();
+            const modelo = document.getElementById('modelo').value.trim();
+            const proprietario = document.getElementById('proprietario').value.trim();
+
+            if (!placa || !modelo || !proprietario) {
+                alert('Preencha todos os campos!');
+                return;
+            }
+
+            if (veiculos.length >= TOTAL_VAGAS) {
+                alert('Estacionamento lotado!');
+                return;
+            }
+
+            if (veiculos.some(v => v.placa === placa)) {
+                alert('Este veículo já está estacionado!');
+                return;
+            }
+
+            veiculos.push({
+                placa,
+                modelo,
+                proprietario,
+                entrada: new Date().toISOString()
+            });
+
+            localStorage.setItem('estacionamento', JSON.stringify(veiculos));
+
+            // Limpa formulário
+            document.getElementById('placa').value = '';
+            document.getElementById('modelo').value = '';
+            document.getElementById('proprietario').value = '';
+
+            atualizar();
+        }
+
+        function abrirSaida(index) {
+            veiculoSaindo = index;
+            const v = veiculos[index];
+            document.getElementById('modalPlaca').textContent = v.placa;
+            document.getElementById('modalTempo').textContent = calcularTempo(v.entrada);
+            document.getElementById('modalValor').textContent = 'R$ ' + calcularValor(v.entrada);
+            document.getElementById('modal').classList.add('show');
+        }
+
+        function fecharModal() {
+            document.getElementById('modal').classList.remove('show');
+            veiculoSaindo = null;
+        }
+
+        function confirmarSaida() {
+            if (veiculoSaindo === null) return;
+            veiculos.splice(veiculoSaindo, 1);
+            localStorage.setItem('estacionamento', JSON.stringify(veiculos));
+            fecharModal();
+            atualizar();
+        }
+
+        // Atualiza a cada 30 segundos o tempo
+        setInterval(atualizar, 30000);
+        atualizar();
+    </script>
+</body>
+
+</html>
